@@ -33,11 +33,22 @@
                 var nuevoEstado = Object.assign({}, state)
 
                 if (action.type == 'AGR') {
-                    nuevoEstado.lista.push({
-                        id: action.id,
-                        li: "<li>"+ action.tarea +"</li>"
-                    });
-                    console.log(nuevoEstado);
+                    //nuevoEstado.lista.push({
+                    //    id: action.id,
+                    //    li: "<li>"+ action.tarea +" <button id='"+ action.id +"' onclick='eliminarTarea(id)'>Eliminar</button></li>"
+                    //});
+                    nuevoEstado.lista = state.lista.concat(
+                        [{
+                            id: action.id,
+                            li: "<li>"+ action.tarea +" <button id='"+ action.id +"' onclick='eliminarTarea(id)'>Eliminar</button></li>"
+                        }]
+                    )
+                    //console.log(nuevoEstado);
+                    return nuevoEstado;
+                } else if (action.type == 'ELM'){
+                    nuevoEstado.lista = state.lista.filter(function(elemento){
+                        return parseInt(elemento.id) !== parseInt(action.id);
+                    })
                     return nuevoEstado;
                 }
 
@@ -58,16 +69,28 @@
                 }
             }
 
+            var actionEliminar = function (id){
+                return {
+                    type: 'ELM',
+                    id
+                }
+            }
+
             var id = 1;
 
             var agregarTarea = function (evento) {
                 if (evento.keyCode === 13){
                     //console.log(evento);
                     //console.log(evento.target.value);
-                    evento.target.value = "";
                     store.dispatch(actionAgregar(evento.target.value, id));
+                    evento.target.value = "";
                     id += 1;
                 }
+            }
+
+            var eliminarTarea = function (_id){
+                console.log(id);
+                store.dispatch(actionEliminar(_id))
             }
 
             var mostrarTareas = function(){
